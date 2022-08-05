@@ -11,12 +11,13 @@ jobs:
     timeout-minutes: 25
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup Flutter
-      uses: subosito/flutter-action@v1.5.3
+      uses: subosito/flutter-action@v2.3.0
       with:
         channel: stable
+        cache: true
 
     - name: Flutter doctor
       run: flutter doctor
@@ -24,14 +25,11 @@ jobs:
     - name: Download pub dependencies
       run: flutter pub get
 
-    - name: Build for windows
-      run: flutter build windows
-
-    - name: Create .msix installer
-      run: flutter pub run msix:create
+    - name: Build and create the .msix installer
+      run: flutter pub run msix:create --store
 
     - name: Release to GitHub
-      uses: ncipollo/release-action@v1.9.0
+      uses: ncipollo/release-action@v1.10.0
       with:
         artifacts: "build/windows/runner/Release/converternow-windows.msix"
         token: ${{ secrets.GH_TOKEN }}
